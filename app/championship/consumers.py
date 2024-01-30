@@ -4,8 +4,7 @@ import json
 class WSConsumer(AsyncConsumer):
 
     async def websocket_connect(self, event):
-        user = self.scope['user']
-        group_name = "notify_"+ user.username
+        group_name = "championship-info"
         await self.channel_layer.group_add(group_name, self.channel_name)
         await self.send({
             "type": "websocket.accept"

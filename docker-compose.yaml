@@ -70,6 +70,12 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
     ports:
       - 80
+  
+  redis:
+    image: redis:alpine3.18
+    ports:
+      - 6379
+    restart: always
 
 volumes:
   dev-db-data:
