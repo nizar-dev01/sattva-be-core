@@ -5,13 +5,6 @@ from championship.models import Score
 
 class ScoreSerializer(ModelSerializer):
     """Serializer for Score"""
-    image = SerializerMethodField()
     class Meta:
         model = Score
         fields = '__all__'
-    
-    def get_image(self, obj):
-        """Return the image url"""
-        if obj.image and obj.image.url:
-            return obj.image.url
-        return None

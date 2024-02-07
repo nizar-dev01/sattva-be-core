@@ -1,6 +1,10 @@
 from django.db import models
+from django.db.models.signals import m2m_changed
+from django.dispatch import receiver
+
 import os
 import uuid
+
 
 # Create your models here.
 
@@ -91,26 +95,38 @@ class Member(models.Model):
     def __str__(self):
         return f"{self.name} : {self.company.name}"
 
+class Score(models.Model):
+    """Model of Score"""
+    competition = models.ForeignKey('Competition', on_delete=models.CASCADE, related_name="scores")
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    points = models.CharField(max_length=255, blank=True, null=True)
+    is_wicket = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.competition.title} : {self.team.title} : {self.points}"
+
 
 class Competition(models.Model):
     """Model of Compentition"""
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     title = models.CharField(max_length=255, null=False, blank=False) # like "final", "semi-final", etc
     venue = models.CharField(max_length=255, null=False, blank=False)
+    time = models.CharField(max_length=255, null=True, blank=True)
     competitors = models.ManyToManyField(Team, blank=True, related_name="competitions")
     is_finished = models.BooleanField(default=False, null=False, blank=False)
-
+    winner = models.ForeignKey(Team, on_delete=models.CASCADE, null=True)
     def __str__(self):
         return self.title
 
-class Score(models.Model):
-    """Model of Score"""
-    competition = models.ForeignKey(Competition, on_delete=models.CASCADE, related_name="scores")
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
-    points = models.CharField(max_length=255, blank=True, null=True)
-
-    def __str__(self):
-        return f"{self.competition.title} : {self.team.title} : {self.points}"
+# Add default scores
+@receiver(m2m_changed, sender=Competition.competitors.through)
+def handle_m2m_change(sender, instance, action, **kwargs):
+    if action == "post_add":
+        for team in instance.competitors.all():
+            exists = Score.objects.filter(team=team, competition=instance).exists()
+            if not exists:
+                Score.objects.create(team=team, competition=instance, points="0", is_wicket=False)
+                Score.objects.create(team=team, competition=instance, points="0", is_wicket=True)
 
 class ChampionshipHistory(models.Model):
     """Model of Championship History"""
