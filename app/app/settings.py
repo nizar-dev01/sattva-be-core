@@ -226,3 +226,26 @@ SPECTACULAR_SETTINGS = {
         'rest_framework.authentication.SessionAuthentication'
     ]
 }
+
+LOG_FILE_PATH = get_env("LOG_FILE_PATH", "django_logs.log")
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': LOG_FILE_PATH,
+            'maxBytes': 1024*1024*5,  # 5MB
+            'backupCount': 5,  # keep at most 5 log files
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
