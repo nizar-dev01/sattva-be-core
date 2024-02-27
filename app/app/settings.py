@@ -52,6 +52,8 @@ CORS_ALLOWED_ORIGINS.extend(
     )
 )
 
+CORS_ORIGIN_ALLOW_ALL = True
+
 USE_X_FORWARDED_HOST = True
 
 
@@ -168,8 +170,8 @@ USE_TZ = True
 STATIC_URL = "/static/"
 MEDIA_URL = "/media/"
 
-MEDIA_ROOT = "/vol/web/media/"
-STATIC_ROOT = "/vol/web/static/"
+MEDIA_ROOT = get_env("MEDIA_ROOT")
+STATIC_ROOT = get_env("STATIC_ROOT")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
