@@ -9,9 +9,26 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+import environ
+env=environ.Env()
+environ.Env.read_env()
 
-import os
-get_env = os.environ.get
+def get_env(envar, default_val=""):
+    try:
+        val=env(envar)
+        return val
+    except:
+        return default_val
+    
+
+def get_env(envar, default_val=""):
+    try:
+        val=env(envar)
+        return val
+    except:
+        return default_val
+
+# get_env = os.environ.get
 
 
 from pathlib import Path
